@@ -1,0 +1,43 @@
+services:
+  valorrea:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+    container_name: valorrea
+    restart: unless-stopped
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.valorrea.rule=Host(`valorrea.kodevio.com`)
+      - traefik.http.routers.valorrea.entrypoints=websecure
+      - traefik.http.routers.valorrea.tls.certResolver=letsencrypt
+      - traefik.http.routers.valorrea-http.rule=Host(`valorrea.kodevio.com`)
+      - traefik.http.routers.valorrea-http.entrypoints=web
+      - traefik.http.routers.valorrea-http.middlewares=redirect-to-https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.services.valorrea.loadbalancer.server.port=3000
+
+networks:
+  dokploy-network:
+    external: true
