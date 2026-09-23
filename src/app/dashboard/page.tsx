@@ -206,7 +206,7 @@ export default function DashboardPage() {
         </div>
         {upcoming.length === 0 ? (
           <p className="font-manrope text-sm text-text-muted">
-            Nothing scheduled ahead — the calendar is empty.
+            Nothing scheduled ahead — check back soon.
           </p>
         ) : (
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">

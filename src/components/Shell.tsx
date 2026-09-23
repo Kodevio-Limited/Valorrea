@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 
 const TITLES: { prefix: string; title: string }[] = [
@@ -16,11 +17,11 @@ const TITLES: { prefix: string; title: string }[] = [
 
 export function Shell({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   const match = TITLES.find(
     (t) =>
-      window.location.pathname === t.prefix ||
-      window.location.pathname.startsWith(t.prefix + "/")
+      pathname === t.prefix || pathname.startsWith(t.prefix + "/")
   );
   const title = match?.title ?? "Faith Admin";
 
